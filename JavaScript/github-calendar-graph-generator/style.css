@@ -1,0 +1,7 @@
+#cal-wrapper {
+    display: none; /*initially hidden from UI*/
+    justify-content: center;
+    align-items: center;
+    padding: 50px 0;
+    flex-direction: column;
+}

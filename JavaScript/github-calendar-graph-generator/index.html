@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #loading {display: inline-block;width: 150px;height: 150px;border: 5px solid rgb(26 108 97 / 54%);border-radius: 50%;border-top-color: #fff0;animation: spin 1s cubic-bezier(0, 0, 0, 0) infinite;-webkit-animation: spin 1s cubic-bezier(0, 0, 0, 0) infinite;position: fixed;top: 50%;left: 50%;box-sizing: border-box;translate: -50% -50%;}@keyframes spin {to {-webkit-transform: rotate(360deg);}}@-webkit-keyframes spin {to {-webkit-transform: rotate(360deg);}}
+    </style>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+<div id="loading"></div>
+<div id="cal-wrapper">
+    <div id="cal-heatmap"></div>
+    <button id="random100" onclick="hitRandom100()">Random 100</button>
+</div>
+
+
+<script>
+
+    let cal;
+    let initialSetupData = {
+        currentYear: new Date().getFullYear(),
+        cellSize: 10,
+    }
+
+    window.onload = function () {
+        hideLoader();
+        cal = new CalHeatMap();
+        initializeCalendarMap();
+    };
+
+    function hideLoader() {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('cal-wrapper').style.display = 'flex';
+    }
+
+    function initializeCalendarMap() {
+        cal.init({
+            itemSelector: "#cal-heatmap",
+            domain: "year",
+            subDomain: "day",
+            start: new Date(initialSetupData.currentYear, 0),
+            cellSize: initialSetupData.cellSize,
+            range: 1,
+            label: {
+                position: "top"
+            },
+            legend: [1, 2, 3, 4],
+            legendHorizontalPosition: "right",
+            onClick: function (date, nb, data) {
+                console.log(nb, "--", data);
+                let updatedData = {};
+                updatedData[+date / 1000] = nb ? nb + 1 : 1;
+                cal.update(updatedData, false, cal.RESET_SINGLE_ON_UPDATE);
+            }
+        });
+    }
+
+    function hitRandom100() {
+        let updatedData = {};
+        for (let i = 0; i < 100; i++) {
+            let date = new Date(initialSetupData.currentYear, 0, Math.floor(Math.random() * 365));
+            updatedData[+date / 1000] = 1;
+        }
+        cal.update(updatedData, false, cal.RESET_SINGLE_ON_UPDATE);
+    }
+
+
+</script>
+
+<script defer src="//d3js.org/d3.v3.min.js" type="text/javascript"></script>
+<script defer src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js" type="text/javascript"></script>
+<link href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" rel="stylesheet"/>
+</body>
+</html>
