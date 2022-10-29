@@ -12,7 +12,15 @@
 <div id="loading"></div>
 <div id="cal-wrapper">
     <div id="cal-heatmap"></div>
-    <button id="random100" onclick="hitRandom100()">Random 100</button>
+    <div class="random-100-days">
+        <button id="random100" onclick="hitRandom100()">Random 100 days</button>
+        <!-- radio button to choose single commit or random commits each day  -->
+        <input checked id="single" name="no-of-commits" onclick="updateCommitsPerDay(this)" type="radio" value="single">
+        <label for="single">Single commit</label>
+        <input id="random" name="no-of-commits" onclick="updateCommitsPerDay(this)" type="radio" value="random">
+        <label for="random">Random commits</label>
+
+    </div>
 </div>
 
 
@@ -22,6 +30,10 @@
     let initialSetupData = {
         currentYear: new Date().getFullYear(),
         cellSize: 10,
+    }
+
+    let generatorData = {
+        randomCommitsPerDay: false,
     }
 
     window.onload = function () {
@@ -57,15 +69,25 @@
         });
     }
 
+    function updateCommitsPerDay(element) {
+        generatorData.randomCommitsPerDay = element.value === 'random';
+    }
+
     function hitRandom100() {
         let updatedData = {};
         for (let i = 0; i < 100; i++) {
             let date = new Date(initialSetupData.currentYear, 0, Math.floor(Math.random() * 365));
-            updatedData[+date / 1000] = 1;
+            updatedData[+date / 1000] = generatorData.randomCommitsPerDay ? getRandomInt() : 1;
         }
         cal.update(updatedData, false, cal.RESET_SINGLE_ON_UPDATE);
     }
 
+    /*
+    * Generate random number between min and max
+    * */
+    function getRandomInt(min = 1, max = 10) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
 </script>
 
