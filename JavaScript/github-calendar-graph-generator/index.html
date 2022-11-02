@@ -13,13 +13,37 @@
 <div id="cal-wrapper">
     <div id="cal-heatmap"></div>
     <div class="random-100-days">
-        <button id="random100" onclick="hitRandom100()">Random 100 days</button>
-        <!-- radio button to choose single commit or random commits each day  -->
-        <input checked id="single" name="no-of-commits" onclick="updateCommitsPerDay(this)" type="radio" value="single">
-        <label for="single">Single commit</label>
-        <input id="random" name="no-of-commits" onclick="updateCommitsPerDay(this)" type="radio" value="random">
-        <label for="random">Random commits</label>
-
+        <div class="generator-buttons">
+            <button id="random100" onclick="hitRandom100()">Random 100 days</button>
+        </div>
+        <div class="settings">
+            <h2>Settings</h2>
+            <div class="settings-options">
+                <div>
+                    <input checked id="single" name="no-of-commits" onclick="updateCommitsPerDay(this)" type="radio"
+                           value="single">
+                    <label for="single">Single commit</label>
+                </div>
+                <div>
+                    <input id="random" name="no-of-commits" onclick="updateCommitsPerDay(this)" type="radio"
+                           value="random">
+                    <label for="random">Random commits</label>
+                </div>
+            </div>
+            <div class="settings-options">
+                <div>
+                    <input checked id="replace" name="generation-mode" onclick="updateGenerationMode(this)"
+                           type="radio"
+                           value="replace">
+                    <label for="replace">Replace old map</label>
+                </div>
+                <div>
+                    <input id="amend" name="generation-mode" onclick="updateGenerationMode(this)" type="radio"
+                           value="amend">
+                    <label for="amend">Amend to current</label>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -27,13 +51,15 @@
 <script>
 
     let cal;
-    let initialSetupData = {
+    let initialUiSetupData = {
         currentYear: new Date().getFullYear(),
         cellSize: 10,
     }
 
     let generatorData = {
         randomCommitsPerDay: false,
+        generationMode: 0,
+        userData: {},
     }
 
     window.onload = function () {
@@ -52,8 +78,8 @@
             itemSelector: "#cal-heatmap",
             domain: "year",
             subDomain: "day",
-            start: new Date(initialSetupData.currentYear, 0),
-            cellSize: initialSetupData.cellSize,
+            start: new Date(initialUiSetupData.currentYear, 0),
+            cellSize: initialUiSetupData.cellSize,
             range: 1,
             label: {
                 position: "top"
@@ -62,9 +88,8 @@
             legendHorizontalPosition: "right",
             onClick: function (date, nb, data) {
                 console.log(nb, "--", data);
-                let updatedData = {};
-                updatedData[+date / 1000] = nb ? nb + 1 : 1;
-                cal.update(updatedData, false, cal.RESET_SINGLE_ON_UPDATE);
+                generatorData.userData[+date / 1000] = nb ? nb + 1 : 1;
+                cal.update(generatorData.userData, false, cal.RESET_SINGLE_ON_UPDATE);
             }
         });
     }
@@ -73,13 +98,17 @@
         generatorData.randomCommitsPerDay = element.value === 'random';
     }
 
+    function updateGenerationMode(element) {
+        generatorData.generationMode = element.value === 'amend' ? cal.RESET_SINGLE_ON_UPDATE : cal.RESET_ALL_ON_UPDATE;
+    }
+
     function hitRandom100() {
-        let updatedData = {};
+        generatorData.userData = {};
         for (let i = 0; i < 100; i++) {
-            let date = new Date(initialSetupData.currentYear, 0, Math.floor(Math.random() * 365));
-            updatedData[+date / 1000] = generatorData.randomCommitsPerDay ? getRandomInt() : 1;
+            let date = new Date(initialUiSetupData.currentYear, 0, Math.floor(Math.random() * 365));
+            generatorData.userData[+date / 1000] = generatorData.randomCommitsPerDay ? getRandomInt() : 1;
         }
-        cal.update(updatedData, false, cal.RESET_SINGLE_ON_UPDATE);
+        cal.update(generatorData.userData, false, generatorData.generationMode);
     }
 
     /*
