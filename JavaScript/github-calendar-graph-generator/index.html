@@ -45,6 +45,10 @@
             </div>
         </div>
     </div>
+    <div class="exporter">
+        <button id="export-data" onclick="exportData()" >Export as Text</button>
+        <button id="export-data-json" onclick="exportDataJson()" >Export as Json</button>
+    </div>
 </div>
 
 
@@ -116,6 +120,35 @@
     * */
     function getRandomInt(min = 1, max = 10) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+
+    function exportData() {
+        // export generator.userData to a text file
+        // each line should be in the format of "timestamp: number of commits"
+        // e.g. 1577836800: 1
+
+        let data = generatorData.userData;
+        let dataStr = "";
+        for (let key in data) {
+            dataStr += key + ": " + data[key] + "\r\n";
+        }
+        let blob = new Blob([dataStr], {type: "text/plain;charset=utf-8"});
+
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "data.txt";
+        a.click();
+    }
+
+    function exportDataJson() {
+        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(generatorData.userData));
+        let downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "data.json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
     }
 
 </script>

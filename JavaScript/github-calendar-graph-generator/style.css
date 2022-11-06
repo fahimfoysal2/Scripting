@@ -1,9 +1,11 @@
 #cal-wrapper {
+    width: 635px;
     display: none; /*initially hidden from UI*/
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     padding: 50px 0;
     flex-direction: column;
+    margin: 0 auto;
 }
 
 .random-100-days {
@@ -11,10 +13,18 @@
     gap: 25px;
     align-items: baseline;
 }
-.settings-options{
+
+.settings-options {
     display: flex;
     gap: 10px;
 }
+
 .settings-options div {
 
+}
+
+.exporter {
+    display: flex;
+    margin: 20px 0;
+    gap: 20px;
 }
